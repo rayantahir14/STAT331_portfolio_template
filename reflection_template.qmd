@@ -23,12 +23,17 @@ execute:
 ```{r}
 #| label: wd-1-csv-1
 
+#Lab 2, Question 1
+surveys <- read_csv(here::here("Data", "surveys.csv"))
+
 ```
 
 -   `csv` Example 2
 
 ```{r}
 #| label: wd-1-csv-2
+#Lab 3, Question 1
+teacher_evals <- read_csv(here::here("Week 3", "teacher_evals.csv"))
 
 ```
 
@@ -36,7 +41,12 @@ execute:
 
 ```{r}
 #| label: wd-1-xlsx
-
+#PA 4, Question 1
+cont_region <- read_xlsx(here:here("data", "gov_spending_per_capita.xlsx"),
+                      sheet = "Regional totals",
+                      skip = 14) |>
+  filter(Region != "World total (including Iraq)",
+         Region != "World total (excluding Iraq)")
 ```
 
 **WD-2: I can select necessary columns from a dataset.**
@@ -45,6 +55,13 @@ execute:
 
 ```{r}
 #| label: wd-2-ex-1
+suspect <- fit_cands |>
+#Lab 5
+  inner_join(drivers_license, by = c("license_id" = "id")) |>
+  filter(str_detect(plate_number, "H42W")) |>
+  inner_join(person, by = c("person_id" = "id")) |>
+  select(name, plate_number, car_make, car_model)
+
 
 ```
 
@@ -59,7 +76,22 @@ execute:
 
 ```{r}
 #| label: wd-2-ex-3
-
+#Lab 4, Question 7
+ca_childcare_long <- ca_childcare |>
+  select(region, study_year, mc_infant, mc_toddler, mc_preschool) |>
+  pivot_longer(
+    cols = starts_with("mc_"),
+    names_to = "age_group",
+    values_to = "weekly_price"
+  ) |>
+  mutate(
+    age_group = case_match(age_group,
+                       "mc_infant" ~ "Infant",
+                       "mc_toddler" ~ "Toddler",
+                       "mc_preschool" ~ "Preschool"),
+    age_group = factor(age_group, levels = c("Infant", "Toddler", "Preschool")),
+    region = fct_reorder2(region, study_year, weekly_price)
+  )
 ```
 
 **WD-3: I can filter rows from a dataframe for a *variety* of data types (e.g., numeric, integer, character, factor, date).**
@@ -68,27 +100,75 @@ execute:
 
 ```{r}
 #| label: wd-3-numeric-ex-1
+#Lab 4, Question 5
+median_income_by_region <- ca_childcare |>
+  filter(study_year %in% c(2008,2018)) |>
+  group_by(region, study_year) |>
+  summarize(
+    median_income = median(mhi_2018, na.rm = TRUE),
+    .groups = "drop"
+  ) |>
+  
+  pivot_wider(
+      names_from = study_year,
+      values_from = median_income,
+  ) |>
+  rename(
+    "Median Income (2008, 2018 dollars)" = '2008',
+    "Median Income (2018, 2018 dollars)" = '2018'
+  ) |>
+  arrange(desc('Median Income(2018, 2018 dollars'))
 
+#Revision Comment: I revised my code based on the feedback I received to better represent the data without a grouping variable and with a more informative label for my columns that accurately represented the data within it.
 ```
 
 -   Numeric Example 2
 
 ```{r}
 #| label: wd-3-numeric-ex-1
-
+#Lab 5
+concert_mastermind <- facebook_event_checkin |>
+  filter(
+    event_name == "SQL Symphony Concert", 
+    ymd(date) %within% interval(ymd("2017-12-01"),               ymd("2017-12-31"))) |>
+    
+  count(person_id, name = "visits") |>
+  filter(visits >= 3) |>
+  inner_join(person, by = c("person_id" = "id")) |>
+  inner_join(drivers_license, by = c("license_id" =   "id")) |>
+  filter(hair_color == "red", between(height, 65,    67))
 ```
 
 -   Character Example 1 (any context)
 
 ```{r}
 #| label: wd-3-character
-
+concert_mastermind <- facebook_event_checkin |>
+  filter(
+    event_name == "SQL Symphony Concert", 
+    ymd(date) %within% interval(ymd("2017-12-01"),               ymd("2017-12-31"))) |>
+    
+  count(person_id, name = "visits") |>
+  filter(visits >= 3) |>
+  inner_join(person, by = c("person_id" = "id")) |>
+  inner_join(drivers_license, by = c("license_id" =   "id")) |>
+  filter(hair_color == "red", between(height, 65,    67))
 ```
 
 -   Character Example 2 (example must use functions from **stringr**)
 
 ```{r}
 #| label: wd-3-string
+fit48z <- get_fit_now_member |>
+  filter(membership_status == "gold",
+         str_detect(id, fixed("48Z")))
+
+fit48z_checked <- get_fit_now_check_in |>
+  filter(ymd(check_in_date) == ymd("2018-01-09"))
+
+fit_cands <- fit48z |>
+  inner_join(fit48z_checked, by = c("id" = "membership_id")) |>
+  inner_join(person, by = c("person_id" = "id"))
 
 ```
 
@@ -96,7 +176,16 @@ execute:
 
 ```{r}
 #| label: wd-3-date
+fit48z <- get_fit_now_member |>
+  filter(membership_status == "gold",
+         str_detect(id, fixed("48Z")))
 
+fit48z_checked <- get_fit_now_check_in |>
+  filter(ymd(check_in_date) == ymd("2018-01-09"))
+
+fit_cands <- fit48z |>
+  inner_join(fit48z_checked, by = c("id" = "membership_id")) |>
+  inner_join(person, by = c("person_id" = "id"))
 ```
 
 **WD-4: I can modify existing variables and create new variables in a dataframe for a *variety* of data types (e.g., numeric, integer, character, factor, date).**
@@ -105,13 +194,30 @@ execute:
 
 ```{r}
 #| label: wd-4-numeric-ex-1
-
+teacher_evals_compare <- teacher_evals |>
+  filter(question_no==903) |>
+  mutate(
+  SET_level = if_else(SET_score_avg >= 4, "excellent", "standard"),
+  sen_level = case_when(
+    seniority <= 4 ~ "junior",
+    seniority >= 5 & seniority <= 8 ~ "senior",
+    seniority > 8 ~ "very senior",
+  )
+) |>
+select(course_id, SET_level, sen_level)
 ```
 
 -   Numeric Example 2
 
 ```{r}
 #| label: wd-4-numeric-ex-2
+#Challenge 4
+ca_afford <- ca_childcare |>
+  mutate(
+    weekly_income = mhi_2018 / 52, 
+    center_afford = mc_infant / weekly_income,
+    family_afford = mfcc_infant / weekly_income
+  )
 
 ```
 
@@ -119,7 +225,21 @@ execute:
 
 ```{r}
 #| label: wd-4-factor-ex-1
-
+ca_childcare_long <- ca_childcare |>
+  select(region, study_year, mc_infant, mc_toddler, mc_preschool) |>
+  pivot_longer(
+    cols = starts_with("mc_"),
+    names_to = "age_group",
+    values_to = "weekly_price"
+  ) |>
+  mutate(
+    age_group = case_match(age_group,
+                       "mc_infant" ~ "Infant",
+                       "mc_toddler" ~ "Toddler",
+                       "mc_preschool" ~ "Preschool"),
+    age_group = factor(age_group, levels = c("Infant", "Toddler", "Preschool")),
+    region = fct_reorder2(region, study_year, weekly_price)
+  )
 ```
 
 -   Factor Example 2 (reordering levels)
