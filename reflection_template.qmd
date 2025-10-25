@@ -225,6 +225,33 @@ ca_afford <- ca_childcare |>
 
 ```{r}
 #| label: wd-4-factor-ex-1
+#Lab 4, Question 4
+ca_childcare <- ca_childcare |> 
+  mutate(
+    county_name = str_remove(county_name, " County"),
+    region = fct_collapse(
+      county_name,
+    "Superior California" = superior_counties,
+    "North Coast" = north_coast_counties,
+    "San Francisco Bay Area" = san_fran_counties,
+    "Northern San Joaquin Valley" = n_san_joaquin_counties,
+    "Central Coast" = central_coast_counties,
+    "Southern San Joaquin Valley" = s_san_joaquin_counties,
+    "Central Coast" = central_coast_counties,
+    "Southern San Joaquin Valley" = s_san_joaquin_counties,
+    "Inland Empire" = inland_counties,
+    "Los Angeles" = la_county,
+    "Orange" = orange_county,
+    "San Diego-Imperial" = san_diego_imperial_counties
+  ))
+    count(ca_childcare, region)
+```
+
+-   Factor Example 2 (reordering levels)
+
+```{r}
+#| label: wd-4-factor-ex-2
+#Lab 4, Question 7
 ca_childcare_long <- ca_childcare |>
   select(region, study_year, mc_infant, mc_toddler, mc_preschool) |>
   pivot_longer(
@@ -242,25 +269,45 @@ ca_childcare_long <- ca_childcare |>
   )
 ```
 
--   Factor Example 2 (reordering levels)
-
-```{r}
-#| label: wd-4-factor-ex-2
-
-```
-
 -   Character (example must use functions from **stringr**)
 
 ```{r}
 #| label: wd-4-string
-
+#Lab 4, Question 4
+ca_childcare <- ca_childcare |> 
+  mutate(
+    county_name = str_remove(county_name, " County"),
+    region = fct_collapse(
+      county_name,
+    "Superior California" = superior_counties,
+    "North Coast" = north_coast_counties,
+    "San Francisco Bay Area" = san_fran_counties,
+    "Northern San Joaquin Valley" = n_san_joaquin_counties,
+    "Central Coast" = central_coast_counties,
+    "Southern San Joaquin Valley" = s_san_joaquin_counties,
+    "Central Coast" = central_coast_counties,
+    "Southern San Joaquin Valley" = s_san_joaquin_counties,
+    "Inland Empire" = inland_counties,
+    "Los Angeles" = la_county,
+    "Orange" = orange_county,
+    "San Diego-Imperial" = san_diego_imperial_counties
+  ))
+    count(ca_childcare, region)
 ```
 
 -   Date (example must use functions from **lubridate**)
 
 ```{r}
 #| label: wd-4-date
-
+#Lab 5
+crime <- crime_scene_report |>
+  mutate(date = ymd(date))
+  filter(city == "SQL City",
+         type == "murder", 
+         date == ymd("2018-01-15")) |>
+  select(description)
+  
+  crime$description
 ```
 
 **WD-5: I can use mutating joins to combine multiple dataframes.**
@@ -269,13 +316,19 @@ ca_childcare_long <- ca_childcare |>
 
 ```{r}
 #| label: wd-5-left-ex-1
-
+#Lab 4, Question 3
+ca_childcare <- ca_childcare |>
+  left_join(tax_rev, by = c("county_name" = "entity_name", "study_year" = "year"))
 ```
 
 -   `right_join()` Example 1
 
 ```{r}
 #| label: wd-5-right
+#Lab 4, Question 3
+#Example edited to display right_join()
+ca_childcare <- tax_rev |>
+  right_join(ca_childcare, by = c("entity_name" = "county_name", "year" = "study_year"))
 
 ```
 
@@ -290,14 +343,28 @@ ca_childcare_long <- ca_childcare |>
 
 ```{r}
 #| label: wd-5-inner-ex-1
-
+#Lab 4, Question 2
+ca_childcare <- counties |>
+  inner_join(childcare_costs, by = "county_fips_code") |>
+  filter(state_name == "California")
+  colnames(ca_childcare)
 ```
 
 -   `inner_join()` Example 2
 
 ```{r}
 #| label: wd-5-inner-ex-2
+#Lab 5
+fit48z <- get_fit_now_member |>
+  filter(membership_status == "gold",
+         str_detect(id, fixed("48Z")))
 
+fit48z_checked <- get_fit_now_check_in |>
+  filter(ymd(check_in_date) == ymd("2018-01-09"))
+
+fit_cands <- fit48z |>
+  inner_join(fit48z_checked, by = c("id" = "membership_id")) |>
+  inner_join(person, by = c("person_id" = "id"))
 ```
 
 **WD-6: I can use filtering joins to filter rows from a dataframe.**
@@ -306,14 +373,28 @@ ca_childcare_long <- ca_childcare |>
 
 ```{r}
 #| label: wd-6-semi
+#Lab 5
+#Edited to display semi_join()
+fit48z <- get_fit_now_member |>
+  filter(membership_status == "gold",
+         str_detect(id, fixed("48Z")))
 
+fit48z_checked <- get_fit_now_check_in |>
+  filter(ymd(check_in_date) == ymd("2018-01-09"))
+
+fit_cands <- fit48z |>
+  semi_join(fit48z_checked, by = c("id" = "membership_id")) |>
+  inner_join(person, by = c("person_id" = "id"))
 ```
 
 -   `anti_join()`
 
 ```{r}
 #| label: wd-6-anti
-
+#Lab 5
+#Edited to display anti_join
+non_attendees <- person |>
+  anti_join(concert_attendees, by = c("id" = "person_id"))
 ```
 
 **WD-7: I can pivot dataframes from long to wide and visa versa**
@@ -322,14 +403,48 @@ ca_childcare_long <- ca_childcare |>
 
 ```{r}
 #| label: wd-7-long
+#Lab 4, Question 7
+accent10 <- colorRampPalette(brewer.pal(7, "Accent")) (10)
 
+ca_childcare_long <- ca_childcare |>
+  select(region, study_year, mc_infant, mc_toddler, mc_preschool) |>
+  pivot_longer(
+    cols = starts_with("mc_"),
+    names_to = "age_group",
+    values_to = "weekly_price"
+  ) |>
+  mutate(
+    age_group = case_match(age_group,
+                       "mc_infant" ~ "Infant",
+                       "mc_toddler" ~ "Toddler",
+                       "mc_preschool" ~ "Preschool"),
+    age_group = factor(age_group, levels = c("Infant", "Toddler", "Preschool")),
+    region = fct_reorder2(region, study_year, weekly_price)
+  )
 ```
 
 -   `pivot_wider()`
 
 ```{r}
 #| label: wd-7-wide
-
+#Lab 4, Question 5
+median_income_by_region <- ca_childcare |>
+  filter(study_year %in% c(2008,2018)) |>
+  group_by(region, study_year) |>
+  summarize(
+    median_income = median(mhi_2018, na.rm = TRUE),
+    .groups = "drop"
+  ) |>
+  
+  pivot_wider(
+      names_from = study_year,
+      values_from = median_income,
+  ) |>
+  rename(
+    "Median Income (2008, 2018 dollars)" = '2008',
+    "Median Income (2018, 2018 dollars)" = '2018'
+  ) |>
+  arrange(desc('Median Income(2018, 2018 dollars'))
 ```
 
 ## Reproducibility
@@ -350,21 +465,60 @@ The following assignments satisfy the above criteria:
 
 ```{r}
 #| label: r-2-1
-
+ggplot(ca_afford_long, aes(x = study_year, y = Affordability, color = Setting)) +
+  stat_summary(fun = median, geom = "line", linewidth = 1.2) +
+  stat_summary(fun = median, geom = "point", size = 2.2) +
+  scale_y_continuous(labels = label_percent(accuracy = 1)) + 
+  labs(
+  title = "Affordability of Childcare in California (2008-2018)",
+  subtitle = "Median Weekly Cost as a Share of County Median Household Income",
+  x = "Year",
+  y = "Median Share of Weekly Income Spent on Infant Care",
+  color = "Childcare Setting"
+) +
+theme_minimal(base_size = 11) +
+theme(
+  plot.title = element_text(face = "bold", size = 15, hjust = 0.5),
+  plot.subtitle= element_text(size = 12, hjust= 0.5),
+  legend.position = "top"
+)
 ```
 
 -   Example of **dplyr** pipeline
 
 ```{r}
 #| label: r-2-2
+#Lab 4, Question 6
+accent10 <- colorRampPalette(brewer.pal(7, "Accent")) (10)
 
+ca_childcare_long <- ca_childcare |>
+  select(region, study_year, mc_infant, mc_toddler, mc_preschool) |>
+  pivot_longer(
+    cols = starts_with("mc_"),
+    names_to = "age_group",
+    values_to = "weekly_price"
+  ) |>
+  mutate(
+    age_group = case_match(age_group,
+                       "mc_infant" ~ "Infant",
+                       "mc_toddler" ~ "Toddler",
+                       "mc_preschool" ~ "Preschool"),
+    age_group = factor(age_group, levels = c("Infant", "Toddler", "Preschool")),
+    region = fct_reorder2(region, study_year, weekly_price)
+  )
 ```
 
 -   Example of function formatting
 
 ```{r}
 #| label: r-2-3
-
+#Lab 5
+crime <- crime_scene_report |>
+  mutate(date = ymd(date))
+  filter(city == "SQL City",
+         type == "murder", 
+         date == ymd("2018-01-15")) |>
+  select(description)
 ```
 
 **R-3: I can write robust programs that are resistant to changes in inputs.**
@@ -373,7 +527,24 @@ The following assignments satisfy the above criteria:
 
 ```{r}
 #| label: r-3-example
-
+#Lab 5
+median_income_by_region <- ca_childcare |>
+  filter(study_year %in% c(2008,2018)) |>
+  group_by(region, study_year) |>
+  summarize(
+    median_income = median(mhi_2018, na.rm = TRUE),
+    .groups = "drop"
+  ) |>
+  
+  pivot_wider(
+      names_from = study_year,
+      values_from = median_income,
+  ) |>
+  rename(
+    "Median Income (2008, 2018 dollars)" = '2008',
+    "Median Income (2018, 2018 dollars)" = '2018'
+  ) |>
+  arrange(desc('Median Income(2018, 2018 dollars'))
 ```
 
 -   Example (function stops)
@@ -391,6 +562,24 @@ The following assignments satisfy the above criteria:
 
 ```{r}
 #| label: dvs-1-num
+#Challenge 4
+ggplot(ca_afford_long, aes(x = study_year, y = Affordability, color = Setting)) +
+  stat_summary(fun = median, geom = "line", linewidth = 1.2) +
+  stat_summary(fun = median, geom = "point", size = 2.2) +
+  scale_y_continuous(labels = label_percent(accuracy = 1)) + 
+  labs(
+  title = "Affordability of Childcare in California (2008-2018)",
+  subtitle = "Median Weekly Cost as a Share of County Median Household Income",
+  x = "Year",
+  y = "Median Share of Weekly Income Spent on Infant Care",
+  color = "Childcare Setting"
+) +
+theme_minimal(base_size = 11) +
+theme(
+  plot.title = element_text(face = "bold", size = 15, hjust = 0.5),
+  plot.subtitle= element_text(size = 12, hjust= 0.5),
+  legend.position = "top"
+)
 
 ```
 
@@ -398,20 +587,87 @@ The following assignments satisfy the above criteria:
 
 ```{r}
 #| label: dvs-2-num-cat
-
+#Lab 2, Question 16
+ggplot(surveys, aes(x=weight, y=species))+ 
+geom_boxplot(outlier.shape=NA) + 
+geom_jitter(aes(color=sex), alpha = 0.2) +
+  scale_fill_manual(values=c("M"="steelblue", "F" = "purple2")) +
+  scale_color_manual(values=c("M" = "steelblue", "F" = "purple2"))+
+labs(
+  title= "Distribution of Weight by Species",
+  x= "Weight (g)",
+  y="Species",
+  fill = "Sex",
+  color = "Sex"
+) + theme(axis.text.x=element_text(angle=45, hjust=1), plot.title=element_text(hjust=0.5))
 ```
 
 -   At least two categorical variables
 
 ```{r}
 #| label: dvs-2-cat
-
+#Lab 4, Question 7
+ggplot(data = ca_childcare_long, aes(x = study_year, y = weekly_price, color = region)) +
+  geom_point(alpha = 0.8, size = 1.6) +
+  geom_smooth(method = "loess", se = TRUE, linewidth = 1) +
+  facet_wrap(~ age_group, nrow = 1, scales = "fixed") +
+  scale_x_continuous(
+    breaks = seq(2008, 2018, 2),
+    limits = c(2008, 2018),
+  ) +
+  scale_color_manual(values = accent10) +
+  labs(
+    title = "Weekly Median Price for Center-Based Childcare ($)",
+    x = "Study Year",
+    y = "Weekly Price",
+    color = "California Region"
+   ) +
+  theme(
+    panel.border = element_rect(color = "black", fill = NA),
+  panel.grid.major = element_line(color = "gray90", linewidth = 0.4),
+  panel.grid.minor = element_line(color = "gray90", linewidth = 0.3),
+  panel.background = element_rect(fill = "white", color = "black"),
+    axis.text.x = element_text(size = 11, angle = 0, hjust = 0.5),
+    axis.title = element_text(size = 12),
+    plot.title = element_text(face = "bold", size = 15, hjust = 0.5),
+    legend.position = "right",
+    legend.title = element_text(size = 12),
+    legend.text = element_text(size = 10),
+  )
 ```
 
 -   Dates (time series plot)
 
 ```{r}
 #| label: dvs-2-date
+#Lab 4, Question 6
+ggplot(data = ca_childcare_long, aes(x = study_year, y = weekly_price, color = region)) +
+  geom_point(alpha = 0.8, size = 1.6) +
+  geom_smooth(method = "loess", se = TRUE, linewidth = 1) +
+  facet_wrap(~ age_group, nrow = 1, scales = "fixed") +
+  scale_x_continuous(
+    breaks = seq(2008, 2018, 2),
+    limits = c(2008, 2018),
+  ) +
+  scale_color_manual(values = accent10) +
+  labs(
+    title = "Weekly Median Price for Center-Based Childcare ($)",
+    x = "Study Year",
+    y = "Weekly Price",
+    color = "California Region"
+   ) +
+  theme(
+    panel.border = element_rect(color = "black", fill = NA),
+  panel.grid.major = element_line(color = "gray90", linewidth = 0.4),
+  panel.grid.minor = element_line(color = "gray90", linewidth = 0.3),
+  panel.background = element_rect(fill = "white", color = "black"),
+    axis.text.x = element_text(size = 11, angle = 0, hjust = 0.5),
+    axis.title = element_text(size = 12),
+    plot.title = element_text(face = "bold", size = 15, hjust = 0.5),
+    legend.position = "right",
+    legend.title = element_text(size = 12),
+    legend.text = element_text(size = 10),
+  )
 
 ```
 
@@ -421,6 +677,19 @@ The following assignments satisfy the above criteria:
 
 ```{r}
 #| label: dvs-2-ex-1
+#Lab 2, Question 16
+ggplot(surveys, aes(x=weight, y=species))+ 
+geom_boxplot(outlier.shape=NA) + 
+geom_jitter(aes(color=sex), alpha = 0.2) +
+  scale_fill_manual(values=c("M"="steelblue", "F" = "purple2")) +
+  scale_color_manual(values=c("M" = "steelblue", "F" = "purple2"))+
+labs(
+  title= "Distribution of Weight by Species",
+  x= "Weight (g)",
+  y="Species",
+  fill = "Sex",
+  color = "Sex"
+) + theme(axis.text.x=element_text(angle=45, hjust=1), plot.title=element_text(hjust=0.5))
 
 ```
 
