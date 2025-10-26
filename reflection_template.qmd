@@ -10,7 +10,7 @@ execute:
   echo: true
 ---
 
-[**My Grade:**]{.underline} I believe my grade equivalent to course work evidenced below to be an \_\_.
+[**My Grade:**]{.underline} I believe my grade equivalent to course work evidenced below to be an A-.
 
 [**Learning Objective Evidence:**]{.underline} In the code chunks below, provide code from Lab or Challenge assignments where you believe you have demonstrated proficiency with the specified learning target. Be sure to specify **where** the code came from (e.g., Lab 4 Question 2).
 
@@ -98,6 +98,8 @@ ca_childcare_long <- ca_childcare |>
 
 ```{r}
 #| label: wd-3-numeric-ex-1
+#Instructor Feedback: I would highly recommend filtering first, so you are summarizing a smaller dataset.Notice that your table still has a grouping variable! Because you grouped by **two** variables, your first group was not dropped! Can you give your column names better titles, so the reader knows what "2008" and "2018" represent? What are the values stored in these columns?
+
 #Lab 4, Question 5
 median_income_by_region <- ca_childcare |>
   filter(study_year %in% c(2008,2018)) |>
@@ -224,6 +226,7 @@ ca_afford <- ca_childcare |>
 ```{r}
 #| label: wd-4-factor-ex-1
 #Lab 4, Question 4
+#Instructor Comments: You should only call the mutate() function once!
 ca_childcare <- ca_childcare |> 
   mutate(
     county_name = str_remove(county_name, " County"),
@@ -243,12 +246,15 @@ ca_childcare <- ca_childcare |>
     "San Diego-Imperial" = san_diego_imperial_counties
   ))
     count(ca_childcare, region)
+    
+#Revision Comment: Instead of calling the mutate() function twice, I made my code more efficient so that it's only called once.
 ```
 
 -   Factor Example 2 (reordering levels)
 
 ```{r}
 #| label: wd-4-factor-ex-2
+#Instructor Comments: Nice work pivoting and modifying the age variable! Technically, recode() has been superseded. Meaning, there are other functions you should use instead. Nice work reordering the facets! For the legend fct_reorder2() is the function you want to use when you have **two** variables in your plot! Can you match my colors??? These are coming from a package and you will need to expand the color palette to get all 10 colors.
 #Lab 4, Question 7
 ca_childcare_long <- ca_childcare |>
   select(region, study_year, mc_infant, mc_toddler, mc_preschool) |>
@@ -265,6 +271,8 @@ ca_childcare_long <- ca_childcare |>
     age_group = factor(age_group, levels = c("Infant", "Toddler", "Preschool")),
     region = fct_reorder2(region, study_year, weekly_price)
   )
+
+#Revision Comment: I replaced the superseded recode() function to use case_match() instead. Additionally, I utilized the function fct_reorder2() instead of fct_reorder() because I was using two variables. I also matched the color palette and format of the plot to recreate to make my reiteration a more precise copy. I learned how to utilize more color palettes and use additional colors through my troubleshooting for this.
 ```
 
 -   Character (example must use functions from **stringr**)
@@ -487,6 +495,9 @@ theme(
 ```{r}
 #| label: r-2-2
 #Lab 4, Question 6
+
+#Instructor Comments: Can you collapse your two step process (arrange + slice) into one step?
+
 accent10 <- colorRampPalette(brewer.pal(7, "Accent")) (10)
 
 ca_childcare_long <- ca_childcare |>
@@ -504,6 +515,8 @@ ca_childcare_long <- ca_childcare |>
     age_group = factor(age_group, levels = c("Infant", "Toddler", "Preschool")),
     region = fct_reorder2(region, study_year, weekly_price)
   )
+
+#Revision Comment: I revised my code to make the two step process I orginally had (slice + arrange) into a single step process by utilizing slice_min to still get the same output.
 ```
 
 -   Example of function formatting
@@ -605,6 +618,9 @@ labs(
 ```{r}
 #| label: dvs-2-cat
 #Lab 4, Question 7
+
+#Instructor Comments: Nice work pivoting and modifying the age variable! Technically, recode() has been superseded. Meaning, there are other functions you should use instead. Nice work reordering the facets! For the legend fct_reorder2() is the function you want to use when you have **two** variables in your plot! Can you match my colors??? These are coming from a package and you will need to expand the color palette to get all 10 colors.
+
 ggplot(data = ca_childcare_long, aes(x = study_year, y = weekly_price, color = region)) +
   geom_point(alpha = 0.8, size = 1.6) +
   geom_smooth(method = "loess", se = TRUE, linewidth = 1) +
@@ -952,6 +968,7 @@ kable(caption = "Instructors with the lowest and highest average Q1 ratings with
 
 ```{r}
 #| label: dvs-4-across
+#Instructor Feedback: These data are more than rows and columns, they have a context! We cannot accurately draw inferences from data without understanding the broader context from which they were collected. When were these data collected? How? By whom? For what purpose?
 #Lab 3, Question 10
 #Modified response to utilize across()
 teacher_evals_clean |>
@@ -966,6 +983,8 @@ teacher_evals_clean |>
     n_courses = n_distinct(course_id),
     .groups = "drop"
   )
+
+#Revision Comment: Instead of using the slice function, I used the %in% operator to identify all possible instructors who had the highest or lowest average ratings, allowing for ties as well.
 ```
 
 **DVS-5: I can find summaries of variables across multiple groups.**
@@ -1010,6 +1029,8 @@ teacher_evals_clean |>
 ```{r}
 #| label: dvs-6-ex-1
 #Lab 4, Question 5
+#Instructor Feedback: I would highly recommend filtering first, so you are summarizing a smaller dataset. Notice that your table still has a grouping variable! Because you grouped by **two** variables, your first group was not dropped! Can you give your column names better titles, so the reader knows what "2008" and "2018" represent? What are the values stored in these columns?
+
 median_income_by_region <- ca_childcare |>
   filter(study_year %in% c(2008,2018)) |>
   group_by(region, study_year) |>
@@ -1027,6 +1048,8 @@ median_income_by_region <- ca_childcare |>
     "Median Income (2018, 2018 dollars)" = '2018'
   ) |>
   arrange(desc('Median Income(2018, 2018 dollars'))
+
+#Revision Comment: I revised my code based on the feedback I received to better represent the data without a grouping variable and with a more informative label for my columns that accurately represented the data within it.
 ```
 
 -   I can modify the text in my table to be more readable (e.g., bold face for column headers)
@@ -1072,6 +1095,7 @@ kable(caption = "Instructor counts by degree and sex")
 
 ```{r}
 #| label: dvs-7-ex-1
+#Challenge 3, Question 2
 ggplot(teacher_evals_compare, aes(x=sen_level, fill = SET_level)) +
   geom_bar(position = "fill") +
   labs(
@@ -1123,6 +1147,7 @@ median_income_by_region <- ca_childcare |>
 
 ```{r}
 #| label: pe-1-one-call
+#Lab 4, Question 4
 ca_childcare <- ca_childcare |> 
   mutate(
     county_name = str_remove(county_name, " County"),
@@ -1150,6 +1175,8 @@ ca_childcare <- ca_childcare |>
 
 ```{r}
 #| label: pe-1-across
+#Lab 3, Question 10
+#Modified response to utilize across()
 teacher_evals_clean |>
   filter(question_no %in% c(901, 902, 903)) |>
   group_by(teacher_id) |>
@@ -1332,14 +1359,24 @@ t.test(len ~ supp, data = ToothGrowth, var.equal = FALSE, alternative="two.sided
 
 <!-- How did you revise your thinking throughout the course? How did you revise your thinking on the code examples you have provided in your portfolio? -->
 
+Throughout this Computing with R course, I would say my understanding of coding and problem-solving has only evolved. Towards the start of the course, working in R, which I had slight experience in from previous stat classes, to now being fully fledged in Quarto was a definitely a little bit of an adjustment to get used the different formatting styles and overall environment. The first few labs/practice activities I was mainly focused on even getting code to run without int erupting errors that would display something relatively close to what I was aiming for. Upon reading feedback, like my use of superceded functions, non-tidy code, formatting issues, etc. I really tried to put a lot of conscious time and effort into improving those aspects of my R code by learning from and processing the feedback I received. Doing this portfolio really made me think about the intricate details that coding involves and how it all sort of builds on each other, assignment after assignment, to overall complement different functions/programs together. Being aware and thoughtful about my responses for this portfolio also allowed me to revise some prior code to include another aspect I wanted to include or even catch and fix up smaller errors.
+
 <!-- For the revisions included in your Portfolio, to help me understand the nature of your revisions, please denote somehow the feedback I provided you (e.g., boldface, italics, colored text) before your revisions. -->
 
 ## Extending My Thinking
 
 <!-- How did you extended your thinking throughout the course? How did you extend your thinking on the code examples you have provided in your portfolio? -->
 
+I would say that as the quarter goes on, I really began to think about coding and programming as a whole as not just following instructions off of a lab or practice activity, but instead thinking about the overall usage of each new skill/package learned and how they all logically interact. I believe I extended my thinking by experimenting with unique ideas, formats and being an active learner in class who utilize support from classmates/instructors. This whole class and it's content have been completely new to me so I think every opportunity I get to learn something new and add another package to my coding arsenal is a way I extend my thinking and knowledge as a hopeful data scientist.
+
 ## Peer Support & Collaboration
 
 <!-- Include an image or a description of feedback you gave that you are proud of (either in a peer review or in Discord). -->
 
+![](images/clipboard-749689766.png)
+
+This a screenshot of the comments I provided for the Lab 4, Peer Review. I feel like my feedback was actionable and thoughtful, while still giving the coder their props on an overall good code execution.
+
 <!-- Include a description of how you grew as a collaborator through the weekly pair programming activities.   -->
+
+Throughout our weekly pair programming, I would definitely say I grew a lot as a collaborator and coder. The first few practice activities took some getting used to, with new faces in your class that you've never met before, and working to utilize the "Coder and Typer" switch-off positions in the correct way. I think over time, I really learned some effective ways to communicate and help within both roles. With coding, especially in partner work, patience is certainley a virtue as not everything will work out the exact way you want it the first time but if you stay calm and keep collaboration high everything always ends up solved by the end.
