@@ -61,8 +61,6 @@ suspect <- fit_cands |>
   filter(str_detect(plate_number, "H42W")) |>
   inner_join(person, by = c("person_id" = "id")) |>
   select(name, plate_number, car_make, car_model)
-
-
 ```
 
 -   Example removing specified columns
@@ -1152,7 +1150,18 @@ ca_childcare <- ca_childcare |>
 
 ```{r}
 #| label: pe-1-across
-
+teacher_evals_clean |>
+  filter(question_no %in% c(901, 902, 903)) |>
+  group_by(teacher_id) |>
+  summarize(
+    across(
+      SET_score_avg,
+      list(mean = ~mean(.x, na.rm = TRUE)),
+      .names = "avg_{.col}_{.fn}"
+    ),
+    n_courses = n_distinct(course_id),
+    .groups = "drop"
+  )
 ```
 
 -   using functions from the `map()` family
@@ -1214,14 +1223,61 @@ ca_childcare <- ca_childcare |>
 
 ```{r}
 #| label: pe-4-1
+#Lab 4, Question 7
+accent10 <- colorRampPalette(brewer.pal(7, "Accent")) (10)
 
+ca_childcare_long <- ca_childcare |>
+  select(region, study_year, mc_infant, mc_toddler, mc_preschool) |>
+  pivot_longer(
+    cols = starts_with("mc_"),
+    names_to = "age_group",
+    values_to = "weekly_price"
+  ) |>
+  mutate(
+    age_group = case_match(age_group,
+                       "mc_infant" ~ "Infant",
+                       "mc_toddler" ~ "Toddler",
+                       "mc_preschool" ~ "Preschool"),
+    age_group = factor(age_group, levels = c("Infant", "Toddler", "Preschool")),
+    region = fct_reorder2(region, study_year, weekly_price)
+  )
 ```
 
 -   I can connect a data wrangling pipeline into a `ggplot()`
 
 ```{r}
 #| label: pe-4-2
+#Challenge 4
+ca_afford_long <- ca_afford |>
+  select(study_year, center_afford,          family_afford) |>
+  pivot_longer(
+    cols = c(center_afford, family_afford),
+    names_to = "Setting",
+    values_to = "Affordability"
+) |>
+mutate(
+  Setting = recode(Setting,
+                  center_afford = "Center-Based",
+                   family_afford = "Family-Based")
+)
 
+ggplot(ca_afford_long, aes(x = study_year, y = Affordability, color = Setting)) +
+  stat_summary(fun = median, geom = "line", linewidth = 1.2) +
+  stat_summary(fun = median, geom = "point", size = 2.2) +
+  scale_y_continuous(labels = label_percent(accuracy = 1)) + 
+  labs(
+  title = "Affordability of Childcare in California (2008-2018)",
+  subtitle = "Median Weekly Cost as a Share of County Median Household Income",
+  x = "Year",
+  y = "Median Share of Weekly Income Spent on Infant Care",
+  color = "Childcare Setting"
+) +
+theme_minimal(base_size = 11) +
+theme(
+  plot.title = element_text(face = "bold", size = 15, hjust = 0.5),
+  plot.subtitle= element_text(size = 12, hjust= 0.5),
+  legend.position = "top"
+)
 ```
 
 ## Data Simulation & Statisical Models
@@ -1248,21 +1304,28 @@ ca_childcare <- ca_childcare |>
 
 ```{r}
 #| label: dsm-2-1
-
+#Lab 4, Question 8
+#Showcasing Linear Regression
+reg_mod1 <- lm(mc_infant ~ mhi_2018, data = ca_childcare)
+summary(reg_mod1)
 ```
 
 -   Example 2
 
 ```{r}
 #| label: dsm-2-2
-
+#Challenge 3, Question 3
+#Showcasing Chi-Square Test of Indepedence
+chisq.test(table(teacher_evals_compare$SET_level, teacher_evals_compare$sen_level))
 ```
 
 -   Example 3
 
 ```{r}
 #| label: dsm-2-3
-
+#Lab 1, Question 9
+#Showcasing Two-Sided T-test
+t.test(len ~ supp, data = ToothGrowth, var.equal = FALSE, alternative="two.sided")
 ```
 
 ## Revising My Thinking
