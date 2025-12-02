@@ -1290,12 +1290,12 @@ teacher_evals_clean |>
     ),
     n_courses = n_distinct(course_id),
     .groups = "drop"
-  )
 ```
 
 -   using functions from the `map()` family
 
 ```{r}
+#Lab 9, Question 2
 #| label: pe-1-map-1
 types_tbl <- map_chr(surveys, typeof) |>
   enframe(name = "Variable", value = "Data Type")
