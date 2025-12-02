@@ -10,7 +10,7 @@ execute:
   echo: true
 ---
 
-[**My Grade:**]{.underline} I believe my grade equivalent to course work evidenced below to be an A-.
+[**My Grade:**]{.underline} I believe my grade equivalent to course work evidenced below to be an A.
 
 [**Learning Objective Evidence:**]{.underline} In the code chunks below, provide code from Lab or Challenge assignments where you believe you have demonstrated proficiency with the specified learning target. Be sure to specify **where** the code came from (e.g., Lab 4 Question 2).
 
@@ -125,7 +125,7 @@ median_income_by_region <- ca_childcare |>
 -   Numeric Example 2
 
 ```{r}
-#| label: wd-3-numeric-ex-1
+#| label: wd-3-numeric-ex-2
 #Lab 5
 concert_mastermind <- facebook_event_checkin |>
   filter(
@@ -459,11 +459,11 @@ median_income_by_region <- ca_childcare |>
 
 The following assignments satisfy the above criteria:
 
--   Example 1
--   Example 2
--   Example 3
--   Example 4
--   Example 5
+-   Lab 2
+-   Lab 3
+-   Challenge 2
+-   Challenge 3
+-   Lab 4
 
 **R-2: I can write well documented and tidy code.**
 
@@ -523,13 +523,17 @@ ca_childcare_long <- ca_childcare |>
 
 ```{r}
 #| label: r-2-3
-#Lab 5
-crime <- crime_scene_report |>
-  mutate(date = ymd(date))
-  filter(city == "SQL City",
-         type == "murder", 
-         date == ymd("2018-01-15")) |>
-  select(description)
+#Lab 8
+rescale_01 <- function(x) {
+  if (!is.numeric(x)) {
+    stop("Error: Input vector must be numeric.")
+  }
+  if (length(x) <= 1) {
+    stop("Error: Input vector must contain more than one value.")
+  }
+  rng <- range(x, na.rm = TRUE)
+  (x - rng[1]) / (rng[2] - rng[1])
+}
 ```
 
 **R-3: I can write robust programs that are resistant to changes in inputs.**
@@ -562,7 +566,16 @@ median_income_by_region <- ca_childcare |>
 
 ```{r}
 #| label: r-3-function-stops
-
+rescale_01 <- function(x) {
+  if (!is.numeric(x)) {
+    stop("Error: Input vector must be numeric.")
+  }
+  if (length(x) <= 1) {
+    stop("Error: Input vector must contain more than one value.")
+  }
+  rng <- range(x, na.rm = TRUE)
+  (x - rng[1]) / (rng[2] - rng[1])
+}
 ```
 
 ## Data Visualization & Summarization
@@ -933,15 +946,104 @@ ggplot(ca_childcare_long, aes(x = study_year, y = weekly_price, color = region))
 -   I can use annotations (e.g., `geom_text()`)
 
 ```{r}
-#| label: dvs-3-2
+#Lab 8, Question 3
+#Modified to include geom_text; I used it to put the mean values for the boxplots in the middle of the plot.
 
+#| label: dvs-3-2
+format_label <- function(label) {
+  label |>
+    str_replace_all("_", " ") |>
+    str_to_title() |>
+    str_replace(" Mm$", " (mm)") |>
+    str_replace(" G$", " (g)")
+}
+
+  plot_by_group <- function(df, x_var, y_var) {
+
+  x_label <- format_label(as.character(substitute(x_var)))
+  y_label <- format_label(as.character(substitute(y_var)))
+
+  title_text <- paste("Distribution of", y_label, "by", x_label)
+  
+  means <- df |>
+    group_by({{ x_var }}) |>
+    summarise(mean_val = mean({{ y_var }}, na.rm = TRUE), .groups = "drop")
+  
+  ggplot(df, aes(x = {{ x_var }}, y = {{ y_var }}, fill = {{ x_var }})) +
+  geom_boxplot(alpha = 0.8) +
+    geom_text(
+      data = means,
+      aes(x = {{ x_var }},
+      y = mean_val,
+      label = round(mean_val) ),
+      vjust = -0.5,
+      color = "black",
+    ) +
+  labs(
+      title = title_text,
+      x = x_label,
+      y = y_label
+    ) +
+    theme_minimal() +
+    theme(legend.position = "none")
+}
+
+#https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/substitute
 ```
 
 -   I can choose creative geometries (e.g., `geom_segment()`, `geom_ribbon)()`)
 
 ```{r}
+#Lab 7, Question 3
+#Modified to utilize geom_ribbon to visually represent range of missing values.
 #| label: dvs-3-3
+#| label: missing-values-ribbon-visual
+#| fig-width: 11
+#| fig-height: 6
+missing_data <- fish |>
+  mutate(weight_missing = is.na(weight)) |>
+  group_by(year, section, trip) |>
+  summarise(num_missing = sum(weight_missing), .groups = "drop") |>
+  mutate(year_num = as.numeric(year))
 
+ribbon_data <- missing_data |>
+  group_by(year_num, trip) |>
+  summarise(
+    ymin = min(num_missing),
+    ymax = max(num_missing),
+    .groups = "drop"
+  )
+ggplot() +
+  geom_ribbon(
+    data = ribbon_data,
+    aes(x = year_num, ymin = ymin, ymax = ymax, group = trip),
+    fill = "lightblue",
+    alpha = 0.4
+  ) +
+  geom_line(
+    data = missing_data,
+    aes(x = year_num, y = num_missing, color = section),
+    size = 1
+  ) +
+  geom_point(
+    data = missing_data,
+    aes(x = year_num, y = num_missing, color = section),
+    size = 2
+  ) +
+  facet_wrap(~ trip, nrow = 1) +
+  labs(
+    title = "Missing Weight Measurements Over Time (with Ribbon Range)",
+    subtitle = "Showcases the range of missingness across river sections for each year and trip.",
+    x = "Year",
+    y = "Number of Missing Weights",
+    color = "River Section"
+  ) +
+  theme_minimal(base_size = 11) +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5),
+    legend.position = "bottom"
+  )
 ```
 
 **DVS-4: I can calculate numerical summaries of variables.**
@@ -1195,7 +1297,10 @@ teacher_evals_clean |>
 
 ```{r}
 #| label: pe-1-map-1
+types_tbl <- map_chr(surveys, typeof) |>
+  enframe(name = "Variable", value = "Data Type")
 
+kable(types_tbl, caption = "Data Types of Variables in the surveys Dataset")
 ```
 
 **PE-2: I can write functions to reduce repetition in my code.**
@@ -1203,22 +1308,52 @@ teacher_evals_clean |>
 -   Example 1: Function that operates on vectors
 
 ```{r}
+#Lab 7, Question 4
 #| label: pe-2-1
+rescale_01 <- function(x) {
+  if(!is.numeric(x)) {
+    stop("Error: Input vector must be a numeric value")
+}
 
+  if (length(x) <= 1) {
+    stop("Error: Input vector must have more than one value
+    ")
+}
+  rng <-range(x, na.rm = TRUE)
+  (x - rng[1]) / (rng[2] - rng[1])
+}
 ```
 
 -   Example 2: Function that operates on data frames
 
 ```{r}
+#Lab 8, Question 1
 #| label: pe-2-2
+rescale_column <- function(df, cols) {
 
+  if (!is.data.frame(df)) {
+    stop("Error: Input must be a data frame.")
+  }
+  df |>
+    mutate(across({{ cols }}, ~ rescale_01(.x)))
+}
 ```
 
 -   Example 3: Function that operates on vectors *or* data frames
 
 ```{r}
+#Lab 8, Question 2
 #| label: pe-2-3
-
+pivot_table <- function(df, row_var, col_var) {
+  df |>
+    count({{ row_var }}, {{ col_var }}) |>
+    pivot_wider(
+      names_from = {{ col_var }},
+      values_from = n,
+      values_fill = 0
+    ) |>
+    janitor::adorn_totals(where = c("row", "col"))
+}
 ```
 
 **PE-3:I can use iteration to reduce repetition in my code.**
@@ -1379,4 +1514,4 @@ This a screenshot of the comments I provided for the Lab 4, Peer Review. I feel 
 
 <!-- Include a description of how you grew as a collaborator through the weekly pair programming activities.   -->
 
-Throughout our weekly pair programming, I would definitely say I grew a lot as a collaborator and coder. The first few practice activities took some getting used to, with new faces in your class that you've never met before, and working to utilize the "Coder and Typer" switch-off positions in the correct way. I think over time, I really learned some effective ways to communicate and help within both roles. With coding, especially in partner work, patience is certainley a virtue as not everything will work out the exact way you want it the first time but if you stay calm and keep collaboration high everything always ends up solved by the end.
+Throughout our weekly pair programming, I would definitely say I grew a lot as a collaborator and coder. The first few practice activities took some getting used to, with new faces in your class that you've never met before, and working to utilize the "Coder and Typer" switch-off positions in the correct way. I think over time, I really learned some effective ways to communicate and help within both roles. With coding, especially in partner work, patience is certainly a virtue as not everything will work out the exact way you want it the first time but if you stay calm and keep collaboration high everything always ends up solved by the end.
