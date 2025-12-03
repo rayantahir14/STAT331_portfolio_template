@@ -55,8 +55,8 @@ cont_region <- read_xlsx(here:here("data", "gov_spending_per_capita.xlsx"),
 
 ```{r}
 #| label: wd-2-ex-1
-suspect <- fit_cands |>
 #Lab 5
+suspect <- fit_cands |>
   inner_join(drivers_license, by = c("license_id" = "id")) |>
   filter(str_detect(plate_number, "H42W")) |>
   inner_join(person, by = c("person_id" = "id")) |>
@@ -67,6 +67,16 @@ suspect <- fit_cands |>
 
 ```{r}
 #| label: wd-2-ex-2
+#Reworked Lab 9, Question 3 response to remove identifier columns that were simply just metadata and not actual biological variables
+
+types_tbl2 <- surveys |>
+  select(-record_id, -plot_id) |>
+  map_chr(typeof) |>
+  enframe(name = "Variable", value = "Data Type") |>
+  kable(
+    caption = "**Data Types of Variables in the Survey Dataset**",
+    col.names = c("Variable", "Data Type")
+  )
 
 ```
 
@@ -143,6 +153,7 @@ concert_mastermind <- facebook_event_checkin |>
 
 ```{r}
 #| label: wd-3-character
+#Lab 5
 concert_mastermind <- facebook_event_checkin |>
   filter(
     event_name == "SQL Symphony Concert", 
@@ -159,9 +170,10 @@ concert_mastermind <- facebook_event_checkin |>
 
 ```{r}
 #| label: wd-3-string
+#Lab 5, edited to fix mistake from midterm portfolio
 fit48z <- get_fit_now_member |>
   filter(membership_status == "gold",
-         str_detect(id, fixed("48Z")))
+         str_detect(id, "^48Z"))
 
 fit48z_checked <- get_fit_now_check_in |>
   filter(ymd(check_in_date) == ymd("2018-01-09"))
@@ -279,26 +291,14 @@ ca_childcare_long <- ca_childcare |>
 
 ```{r}
 #| label: wd-4-string
-#Lab 4, Question 4
-ca_childcare <- ca_childcare |> 
-  mutate(
-    county_name = str_remove(county_name, " County"),
-    region = fct_collapse(
-      county_name,
-    "Superior California" = superior_counties,
-    "North Coast" = north_coast_counties,
-    "San Francisco Bay Area" = san_fran_counties,
-    "Northern San Joaquin Valley" = n_san_joaquin_counties,
-    "Central Coast" = central_coast_counties,
-    "Southern San Joaquin Valley" = s_san_joaquin_counties,
-    "Central Coast" = central_coast_counties,
-    "Southern San Joaquin Valley" = s_san_joaquin_counties,
-    "Inland Empire" = inland_counties,
-    "Los Angeles" = la_county,
-    "Orange" = orange_county,
-    "San Diego-Imperial" = san_diego_imperial_counties
-  ))
-    count(ca_childcare, region)
+#Lab 8, Question 3
+format_label <- function(label) {
+  label |>
+    str_replace_all("_", " ") |>
+    str_to_title() |>
+    str_replace(" Mm$", " (mm)") |>
+    str_replace(" G$", " (g)")
+}
 ```
 
 -   Date (example must use functions from **lubridate**)
@@ -335,14 +335,18 @@ ca_childcare <- ca_childcare |>
 #Example edited to display right_join()
 ca_childcare <- tax_rev |>
   right_join(ca_childcare, by = c("entity_name" = "county_name", "year" = "study_year"))
-
 ```
 
 -   `left_join()` **or** `right_join()` Example 2
 
 ```{r}
 #| label: wd-5-left-right-ex-2
-
+#Lab 4, Question 2
+#Modified to use left_join
+ca_childcare2 <- counties |>
+  left_join(childcare_costs, by = "county_fips_code") |>
+  filter(state_name == "California")
+  colnames(ca_childcare2)
 ```
 
 -   `inner_join()` Example 1
@@ -397,10 +401,11 @@ fit_cands <- fit48z |>
 
 ```{r}
 #| label: wd-6-anti
-#Lab 5
-#Edited to display anti_join
-non_attendees <- person |>
-  anti_join(concert_attendees, by = c("id" = "person_id"))
+#Using data/context from Lab 4 to display an antijoin that would find missing counties
+
+missing_tax_counties <- ca_childcare |>
+  select(county_name) |>
+  anti_join(tax_rev, by = c("county_name" = "entity_name"))
 ```
 
 **WD-7: I can pivot dataframes from long to wide and visa versa**
@@ -494,29 +499,14 @@ theme(
 
 ```{r}
 #| label: r-2-2
-#Lab 4, Question 6
+#Lab 5
+concert_mastermind <- concert_attendees |>
+  count(person_id, name = "visits") |>
+  filter(visits >= 3) |>
+  inner_join(person, by = c("person_id" = "id")) |>
+  inner_join(drivers_license, by = c("license_id" = "id")) |>
+  filter(hair_color == "red", between(height, 65, 67))
 
-#Instructor Comments: Can you collapse your two step process (arrange + slice) into one step?
-
-accent10 <- colorRampPalette(brewer.pal(7, "Accent")) (10)
-
-ca_childcare_long <- ca_childcare |>
-  select(region, study_year, mc_infant, mc_toddler, mc_preschool) |>
-  pivot_longer(
-    cols = starts_with("mc_"),
-    names_to = "age_group",
-    values_to = "weekly_price"
-  ) |>
-  mutate(
-    age_group = case_match(age_group,
-                       "mc_infant" ~ "Infant",
-                       "mc_toddler" ~ "Toddler",
-                       "mc_preschool" ~ "Preschool"),
-    age_group = factor(age_group, levels = c("Infant", "Toddler", "Preschool")),
-    region = fct_reorder2(region, study_year, weekly_price)
-  )
-
-#Revision Comment: I revised my code to make the two step process I orginally had (slice + arrange) into a single step process by utilizing slice_min to still get the same output.
 ```
 
 -   Example of function formatting
@@ -1362,20 +1352,45 @@ pivot_table <- function(df, row_var, col_var) {
 
 ```{r}
 #| label: pe-3-across
-
+#Lab 7, Question 1
+missing_summary <- fish |>
+  summarise(
+    num_missing_obs = sum(if_any(everything(), is.na)),      across(everything(), ~ sum(is.na(.)))
+  )
 ```
 
 -   using a `map()` function with **one** input (e.g., `map()`, `map_chr()`, `map_dbl()`, etc.)
 
 ```{r}
 #| label: pe-3-map-1
-
+#Lab 9, Question 3
+types_tbl <- map_chr(surveys, typeof) |>
+  enframe(name = "Variable", value = "Data_Type") |>
+  arrange(Data_Type) |>
+  kable(
+    caption = "**Data Types of Variables in the Survey Dataset**",
+    col.names = c("Variable", "Data Type"))
 ```
 
--   using a `map()` function with **more than one** input (e.g., `map_2()` or `pmap()`)
+-   using a `map()` function with **one** input (e.g., `map_2()` or `pmap()`)
 
 ```{r}
 #| label: pe-3-map-2
+#Lab 9, Question 7
+map_int(fish, ~ sum(is.na(.x))) |>
+  enframe(name = "Variable", value = "Missing Values") |>
+  gt() |>
+  tab_header(
+    title = "Missing Values per Variable",
+    subtitle = "Blackfoot Fish Dataset"
+  ) |>
+  cols_label(
+    Variable = "Variable",
+    `Missing Values` = "Missing Values"
+  ) |>
+  tab_options(
+    table.font.size = 14
+  )
 
 ```
 
@@ -1442,7 +1457,7 @@ theme(
 )
 ```
 
-## Data Simulation & Statisical Models
+## Data Simulation & Statistical Models
 
 **DSSM-1: I can simulate data from a *variety* of probability models.**
 
@@ -1450,14 +1465,45 @@ theme(
 
 ```{r}
 #| label: dsm-1-1
-
+#Lab 10, Question 1
+#Simulating from a Discrete Uniform Distribution
+randomBabies <- function(n_babies){
+  assigned <- sample(1:n_babies, size = n_babies, replace = FALSE)
+  sum(assigned == 1:n_babies)
+}
+  
+results <- map_int(.x = 1:10000,
+                   .f = ~ randomBabies(4)
+                  )
+table(results)
 ```
 
 -   Example 2
 
 ```{r}
 #| label: dsm-1-2
+#Lab 10, Question 4
+#Simulates from a Uniform and Normal distribution
 
+#define slope and intercept parameters
+intercept = 2
+slope = 1
+
+# generate x vector
+x <- runif(100, min = 0, max = 1)
+
+# generate noise `ep` vector
+ep <- rnorm(100, mean = 0, sd = 1)
+
+# generate outcome from population model
+y = intercept + x*slope + ep
+
+
+# create an "observed data" data frame with only the x and y vectors
+observed_data <- tibble(
+  x = x,
+  y = y
+)
 ```
 
 **DSSM-2: I can conduct common statistical analyses in R.**
