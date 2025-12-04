@@ -1234,7 +1234,7 @@ median_income_by_region <- ca_childcare |>
     "Median Income (2008, 2018 dollars)" = '2008',
     "Median Income (2018, 2018 dollars)" = '2018'
   ) |>
-  arrange(desc('Median Income(2018, 2018 dollars')
+  arrange(desc('Median Income(2018, 2018 dollars'))
 ```
 
 ## Program Efficiency
@@ -1355,7 +1355,8 @@ pivot_table <- function(df, row_var, col_var) {
 #| label: pe-3-across
 #Lab 7, Question 1
 missing_summary <- fish |>
-  summarise(num_missing_obs = sum(if_any(everything(), is.na)), across(everything(), ~ sum(is.na(.))))
+  summarise(num_missing_obs = sum(if_any(everything(), is.na)),     
+            across(everything(), ~ sum(is.na(.))))
 ```
 
 -   using a `map()` function with **one** input (e.g., `map()`, `map_chr()`, `map_dbl()`, etc.)
@@ -1390,6 +1391,7 @@ map_int(fish, ~ sum(is.na(.x))) |>
   tab_options(
     table.font.size = 14
   )
+
 ```
 
 **PE-4: I can use modern tools when carrying out my analysis.**
@@ -1451,7 +1453,7 @@ ca_afford |>
   theme_minimal(base_size = 11) +
   theme(
     plot.title = element_text(face = "bold", size = 15, hjust = 0.5),
-    plot.subtitle= element_text(size = 12, hjust= 0.5),
+    plot.subtitle = element_text(size = 12, hjust = 0.5),
     legend.position = "top"
   )
 
