@@ -1286,12 +1286,12 @@ rescale_column <- function(df, cols) {
 -   using functions from the `map()` family
 
 ```{r}
-#Lab 9, Question 2
+#Lab 10, Question 1
 #| label: pe-1-map-1
-types_tbl <- map_chr(surveys, typeof) |>
-  enframe(name = "Variable", value = "Data Type")
-
-kable(types_tbl, caption = "Data Types of Variables in the surveys Dataset")
+results <- map_int(.x = 1:10000,
+                   .f = ~ randomBabies(4)
+                  )
+table(results)
 ```
 
 **PE-2: I can write functions to reduce repetition in my code.**
@@ -1355,9 +1355,7 @@ pivot_table <- function(df, row_var, col_var) {
 #| label: pe-3-across
 #Lab 7, Question 1
 missing_summary <- fish |>
-  summarise(num_missing_obs = sum(if_any(everything(), is.na)), 
-            across(everything(), ~ sum(is.na(.)))
-           )
+  summarise(num_missing_obs = sum(if_any(everything(), is.na)), across(everything(), ~ sum(is.na(.))))
 ```
 
 -   using a `map()` function with **one** input (e.g., `map()`, `map_chr()`, `map_dbl()`, etc.)
@@ -1392,7 +1390,6 @@ map_int(fish, ~ sum(is.na(.x))) |>
   tab_options(
     table.font.size = 14
   )
-
 ```
 
 **PE-4: I can use modern tools when carrying out my analysis.**
