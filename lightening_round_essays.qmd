@@ -6,16 +6,22 @@ editor: visual
 
 **Answer each of the following questions with *one sentence* including a brief explanation.**
 
-1. Finish the sentence with another student’s name: "If [Name of Student] doesn’t earn an A, then nobody should, because..." Explain your choice and your reasoning.
+1.  Finish the sentence with another student’s name: "If \[Name of Student\] doesn’t earn an A, then nobody should, because..." Explain your choice and your reasoning.
 
+    If Devin doesn't earn an A, then nobody should, because he is genuinely very knowledgeable about programming as a whole and was always willing to help and offer insight whenever I was confused. I know for a fact that he is a smart, motivated guy due to his full-time job offer as a Software Engineer and his previous experiences he's talked about with me in class.
 
-2. What was the most difficult part of the class for you? List a general topic, a specific problem, a kind of work we did, etc. and explain why.
+2.  What was the most difficult part of the class for you? List a general topic, a specific problem, a kind of work we did, etc. and explain why.
 
+    I would say getting used to the format of ggplot functions and the overall layout and style of R code was an initial hump for me. I remember having to resubmit Challenge 2 three or four times because I just couldn't grasp the formatting for certain things in ggplot.
 
-3. What was the easiest part of the class for you? Explain why.
+3.  What was the easiest part of the class for you? Explain why.
 
+    I think using the stringr functions was pretty easy for me because I'd used different strings and string manipulation in Python and Java before and though the format is obviously different, I had the general conceptual idea early on.
 
-4. What part of the class surprised or interested you the most? Explain why.
+4.  What part of the class surprised or interested you the most? Explain why.
 
+    I was really interested in the different types of ways you could display data through R, and though this was an initial challenge for me to grasp, once I got a better hold of it I really found it fascinating and helpful the amount of really unique and meaningful plots you could make in R.
 
-5. Give one piece of advice to a student just beginning a quarter of STAT 331 that will help them be successful in learning.
+5.  Give one piece of advice to a student just beginning a quarter of STAT 331 that will help them be successful in learning.
+
+    I would say just be open-minded and committed to learning. I feel like this would consist of just asking questions, collaborating with your peers, and working through learning curves to come out stronger and more knowledgeable in the end.
