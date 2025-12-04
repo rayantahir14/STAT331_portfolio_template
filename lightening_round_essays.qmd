@@ -24,4 +24,4 @@ editor: visual
 
 5.  Give one piece of advice to a student just beginning a quarter of STAT 331 that will help them be successful in learning.
 
-    I would say just be open-minded and committed to learning. I feel like this would consist of just asking questions, collaborating with your peers, and working through learning curves to come out stronger and more knowledgeable in the end.
+    I would say just be open-minded and committed t learning. I feel like this would consist of just asking questions, collaborating with your peers, and working through learning curves to
