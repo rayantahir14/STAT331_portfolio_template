@@ -636,8 +636,8 @@ ggplot(teacher_evals_compare, aes(x = sen_level, fill = SET_level)) +
   theme_minimal(base_size = 11) +
   theme(
     legend.position = "top",
-    legend.title = element_text(size=10),
-    legend.text = element_text(size=9),
+    legend.title = element_text(size = 10),
+    legend.text = element_text(size = 9),
     panel.border = element_rect(colour = "black", fill = NA, linewidth = 0.5)
 )
 
@@ -690,9 +690,9 @@ ggplot(data = ca_childcare_long, aes(x = study_year, y = weekly_price, color = r
 #Lab 2, Question 16
 #Reworked formatting/angle to improve upon feedback from Midterm
 ggplot(surveys, aes(x = weight, y = species))+ 
-geom_boxplot(outlier.shape=NA) + 
+geom_boxplot(outlier.shape = NA) + 
 geom_jitter(aes(color=sex), alpha = 0.2) +
-  scale_fill_manual(values=c("M"="#0072B2", "F" = "#D55E00")) +
+  scale_fill_manual(values=c("M" = "#0072B2", "F" = "#D55E00")) +
   scale_color_manual(values=c("M" = "#0072B2", "F" = "#D55E00"))+
 labs(
   title= "Distribution of Weight by Species",
@@ -770,7 +770,7 @@ theme(
 #| label: dvs-2-ex-4
 #Challenge 4
 ca_afford_long <- ca_afford |>
-  seplect(study_year, center_afford,          family_afford) |>
+  select(study_year, center_afford, family_afford) |>
   pivot_longer(
     cols = c(center_afford, family_afford),
     names_to = "Setting",
@@ -860,7 +860,7 @@ ggplot(ca_childcare_long, aes(x = study_year, y = weekly_price, color = region))
 ```{r}
 #| label: dvs-3-1-ex-1
 #Challenge 3, Question 2
-ggplot(teacher_evals_compare, aes(x=sen_level, fill = SET_level)) +
+ggplot(teacher_evals_compare, aes(x = sen_level, fill = SET_level)) +
   geom_bar(position = "fill") +
   labs(
     title = "Evaluation of Teachers' Use of Activities",
@@ -1535,14 +1535,14 @@ chisq.test(teacher_evals_compare$SET_level, teacher_evals_compare$sen_level)
 #| label: dsm-2-3
 #Lab 1, Question 9
 #Showcasing Two-Sided T-test
-t.test(len ~ supp, data = ToothGrowth, var.equal = FALSE, alternative="two.sided")
+t.test(len ~ supp, data = ToothGrowth, var.equal = FALSE, alternative = "two.sided")
 ```
 
 ## Revising My Thinking
 
 <!-- How did you revise your thinking throughout the course? How did you revise your thinking on the code examples you have provided in your portfolio? -->
 
-Throughout this Computing with R course, I would say my understanding of coding and problem-solving has only evolved. Towards the start of the course, working in R, which I had slight experience in from previous stat classes, to now being fully fledged in Quarto was a definitely a little bit of an adjustment to get used the different formatting styles and overall environment. The first few labs/practice activities I was mainly focused on even getting code to run without int erupting errors that would display something relatively close to what I was aiming for. Upon reading feedback, like my use of superceded functions, non-tidy code, formatting issues, etc. I really tried to put a lot of conscious time and effort into improving those aspects of my R code by learning from and processing the feedback I received. Doing this portfolio really made me think about the intricate details that coding involves and how it all sort of builds on each other, assignment after assignment, to overall complement different functions/programs together. Being aware and thoughtful about my responses for this portfolio also allowed me to revise some prior code to include another aspect I wanted to include or even catch and fix up smaller errors.
+Throughout this Computing with R course, I would say my understanding of coding and problem-solving has only evolved. Towards the start of the course, working in R, which I had slight experience in from previous stat classes, to now being fully fledged in Quarto was a definitely a little bit of an adjustment to get used the different formatting styles and overall environment. The first few labs/practice activities I was mainly focused on even getting code to run without int erupting errors that would display something relatively close to what I was aiming for. Upon reading feedback, like my use of superseded functions, non-tidy code, formatting issues, etc. I really tried to put a lot of conscious time and effort into improving those aspects of my R code by learning from and processing the feedback I received. Doing this portfolio really made me think about the intricate details that coding involves and how it all sort of builds on each other, assignment after assignment, to overall complement different functions/programs together. Being aware and thoughtful about my responses for this portfolio also allowed me to revise some prior code to include another aspect I wanted to include or even catch and fix up smaller errors.
 
 <!-- For the revisions included in your Portfolio, to help me understand the nature of your revisions, please denote somehow the feedback I provided you (e.g., boldface, italics, colored text) before your revisions. -->
 
