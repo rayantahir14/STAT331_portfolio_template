@@ -583,9 +583,9 @@ ggplot(ca_afford_long, aes(x = study_year, y = Affordability, color = Setting)) 
   scale_y_continuous(labels = label_percent(accuracy = 1)) + 
   labs(
   title = "Affordability of Childcare in California (2008-2018)",
-  subtitle = "Median Weekly Cost as a Share of County Median Household Income",
+  subtitle = "Median Weekly Cost as a Share of County Median Household Income ($)",
   x = "Year",
-  y = "Median Share of Weekly Income Spent on Infant Care",
+  y = "Median Share of Weekly Income Spent on Infant Care ($)",
   color = "Childcare Setting"
 ) +
 theme_minimal(base_size = 11) +
@@ -602,55 +602,48 @@ theme(
 ```{r}
 #| label: dvs-2-num-cat
 #Lab 2, Question 16
-ggplot(surveys, aes(x=weight, y=species))+ 
-geom_boxplot(outlier.shape=NA) + 
-geom_jitter(aes(color=sex), alpha = 0.2) +
-  scale_fill_manual(values=c("M"="steelblue", "F" = "purple2")) +
-  scale_color_manual(values=c("M" = "steelblue", "F" = "purple2"))+
+#Reworked formatting/angle to improve upon feedback from Midterm
+ggplot(surveys, aes(x = weight, y = species))+ 
+geom_boxplot(outlier.shape = NA) + 
+geom_jitter(aes(color = sex), alpha = 0.2) +
+  scale_fill_manual(values = c("M"="steelblue", "F" = "purple2")) +
+  scale_color_manual(values = c("M" = "steelblue", "F" = "purple2"))+
 labs(
-  title= "Distribution of Weight by Species",
-  x= "Weight (g)",
-  y="Species",
+  title = "Distribution of Weight by Species",
+  x = "Weight (g)",
+  y ="Species",
   fill = "Sex",
-  color = "Sex"
-) + theme(axis.text.x=element_text(angle=45, hjust=1), plot.title=element_text(hjust=0.5))
+  color = "Sex") + 
+  theme(axis.text.x = element_text(hjust=1), 
+          plot.title = element_text(hjust=0.5))
 ```
 
 -   At least two categorical variables
 
 ```{r}
 #| label: dvs-2-cat
-#Lab 4, Question 7
-
-#Instructor Comments: Nice work pivoting and modifying the age variable! Technically, recode() has been superseded. Meaning, there are other functions you should use instead. Nice work reordering the facets! For the legend fct_reorder2() is the function you want to use when you have **two** variables in your plot! Can you match my colors??? These are coming from a package and you will need to expand the color palette to get all 10 colors.
-
-ggplot(data = ca_childcare_long, aes(x = study_year, y = weekly_price, color = region)) +
-  geom_point(alpha = 0.8, size = 1.6) +
-  geom_smooth(method = "loess", se = TRUE, linewidth = 1) +
-  facet_wrap(~ age_group, nrow = 1, scales = "fixed") +
-  scale_x_continuous(
-    breaks = seq(2008, 2018, 2),
-    limits = c(2008, 2018),
-  ) +
-  scale_color_manual(values = accent10) +
+#Challenge 3
+ggplot(teacher_evals_compare, aes(x = sen_level, fill = SET_level)) +
+  geom_bar(position = "fill") +
   labs(
-    title = "Weekly Median Price for Center-Based Childcare ($)",
-    x = "Study Year",
-    y = "Weekly Price",
-    color = "California Region"
-   ) +
+    title = "Evaluation of Teachers' Use of Activities",
+    x = "Years of Experience",
+    y = NULL,
+    fill = "Evaluation Rating"
+) +
+  scale_y_continuous(labels = scales::percent)+
+  scale_fill_manual(values = c("excellent" = "#B796D4", "standard" = "#BA955C")) +
+  theme_minimal(base_size = 11) +
   theme(
-    panel.border = element_rect(color = "black", fill = NA),
-  panel.grid.major = element_line(color = "gray90", linewidth = 0.4),
-  panel.grid.minor = element_line(color = "gray90", linewidth = 0.3),
-  panel.background = element_rect(fill = "white", color = "black"),
-    axis.text.x = element_text(size = 11, angle = 0, hjust = 0.5),
-    axis.title = element_text(size = 12),
-    plot.title = element_text(face = "bold", size = 15, hjust = 0.5),
-    legend.position = "right",
-    legend.title = element_text(size = 12),
-    legend.text = element_text(size = 10),
-  )
+    legend.position = "top",
+    legend.title = element_text(size=10),
+    legend.text = element_text(size=9),
+    panel.border = element_rect(colour = "black", fill = NA, linewidth = 0.5)
+)
+
+#https://thomasadventure.blog/posts/ggplot2-percentage-scale/
+
+#https://r-graph-gallery.com/239-custom-layout-legend-ggplot2.html
 ```
 
 -   Dates (time series plot)
@@ -695,18 +688,20 @@ ggplot(data = ca_childcare_long, aes(x = study_year, y = weekly_price, color = r
 ```{r}
 #| label: dvs-2-ex-1
 #Lab 2, Question 16
-ggplot(surveys, aes(x=weight, y=species))+ 
+#Reworked formatting/angle to improve upon feedback from Midterm
+ggplot(surveys, aes(x = weight, y = species))+ 
 geom_boxplot(outlier.shape=NA) + 
 geom_jitter(aes(color=sex), alpha = 0.2) +
-  scale_fill_manual(values=c("M"="steelblue", "F" = "purple2")) +
-  scale_color_manual(values=c("M" = "steelblue", "F" = "purple2"))+
+  scale_fill_manual(values=c("M"="#0072B2", "F" = "#D55E00")) +
+  scale_color_manual(values=c("M" = "#0072B2", "F" = "#D55E00"))+
 labs(
   title= "Distribution of Weight by Species",
   x= "Weight (g)",
   y="Species",
   fill = "Sex",
-  color = "Sex"
-) + theme(axis.text.x=element_text(angle=45, hjust=1), plot.title=element_text(hjust=0.5))
+  color = "Sex") + 
+  theme(axis.text.x = element_text(hjust = 1), 
+        plot.title = element_text(hjust = 0.5))
 
 ```
 
@@ -714,19 +709,22 @@ labs(
 
 ```{r}
 #| label: dvs-2-ex-2
+#Modified colors for plot to be more accessible to those with colorblindness. I identified it online from a "color-blind-friendly color palette".
+#https://www.color-hex.com/color-palette/49436
 #Lab 2, Question 16
-ggplot(surveys, aes(x=weight, y=species))+ 
-geom_boxplot(outlier.shape=NA) + 
+ggplot(surveys, aes(x = weight, y = species)) + 
+geom_boxplot(outlier.shape = NA) + 
 geom_jitter(aes(color=sex), alpha = 0.2) +
-  scale_fill_manual(values=c("M"="steelblue", "F" = "purple2")) +
-  scale_color_manual(values=c("M" = "steelblue", "F" = "purple2"))+
+  scale_fill_manual(values=c("M" = "#0072B2", "F" = "#D55E00")) +
+  scale_color_manual(values=c("M" = "#0072B2", "F" = "#D55E00"))+
 labs(
-  title= "Distribution of Weight by Species",
-  x= "Weight (g)",
-  y="Species",
+  title = "Distribution of Weight by Species",
+  x = "Weight (g)",
+  y ="Species",
   fill = "Sex",
-  color = "Sex"
-) + theme(axis.text.x=element_text(angle=45, hjust=1), plot.title=element_text(hjust=0.5))
+  color = "Sex") + 
+  theme(axis.text.x = element_text(hjust = 1), 
+        plot.title = element_text(hjust = 0.5))
 ```
 
 -   I can modify my plot titles to clearly communicate the data context
@@ -1042,18 +1040,17 @@ ggplot() +
 
 ```{r}
 #| label: dvs-4-summarize
-#Lab 3, Question 10
-teacher_evals_clean |>
-  filter(question_no == 901) |>
-  group_by(teacher_id) |>
-  summarize(
-    avg_q1 = mean(SET_score_avg, na.rm = TRUE),
-    n_courses = n_distinct(course_id), 
-    .groups = "drop"
-) |>
-filter(n_courses >= 5) |>
-filter(avg_q1 %in% c(max(avg_q1), min(avg_q1))) |>
-kable(caption = "Instructors with the lowest and highest average Q1 ratings with 5 or more courses")
+#Lab 7, Question 1
+missing_summary <- fish |>
+  summarise(num_missing_obs = sum(if_any(everything(), is.na)),     
+            across(everything(), ~ sum(is.na(.)))
+  ) |>
+  pivot_longer(
+    cols = -num_missing_obs,
+    names_to = "variable",
+    values_to = "missing_count"
+  ) |>
+  filter(missing_count > 0)
 ```
 
 -   Example using `across()`
@@ -1148,18 +1145,26 @@ median_income_by_region <- ca_childcare |>
 
 ```{r}
 #| label: dvs-6-ex-2
-#Lab 3, Question 12
-teacher_evals_clean |>
-  filter(academic_degree == "dr" | academic_degree == "prof")|>
-  group_by(teacher_id, seniority, sex) |>
-  summarize(
-    avg_response = mean(resp_share, na.rm = TRUE),
-    n_courses = n_distinct(course_id),
-    .groups = "drop"
-    ) |>
-filter(avg_response %in% c(max(avg_response), min(avg_response))) |>
-kable(caption = "Lowest and highest average of % of students responding for Doctorate or Professor instructors")
-
+#Lab 9, Question 8
+map_int(fish, ~sum(is.na(.x))) |>
+  enframe(name = "Measurement Variable", value = "Missing Values") |>
+  gt() |>
+  tab_header(
+    title = "Number of Missing Values for Fish Measurements",
+    subtitle = "Data Collected from 1989 to 2006 on the Blackfoot Fish River in Montana"
+  ) |>
+  cols_label(
+    `Measurement Variable` = md("**Measurement Variable**"),
+    `Missing Values` = md("**Missing Values**")
+  ) |>
+  data_color(
+    columns = `Missing Values`,
+    method = "factor",
+    palette = c(
+      "0" = "lightgreen",      
+      "other" = "salmon"   
+    )
+  )
 ```
 
 -   I can arrange my table to have an intuitive ordering
@@ -1167,18 +1172,19 @@ kable(caption = "Lowest and highest average of % of students responding for Doct
 ```{r}
 #| label: dvs-6-ex-3
 #Lab 3, Question 7
+#Edited to utilize arrange() to arrange from highest to lowest number of instructors
 teacher_evals_clean |>
-  distinct(teacher_id, .keep_all = TRUE)|>
+  distinct(teacher_id, .keep_all = TRUE) |>
   group_by(academic_degree, sex) |>
   summarize(
-    n=n(),
-    seniority_min=min(seniority,na.rm = TRUE),
+    n = n(),
+    seniority_min = min(seniority, na.rm = TRUE),
     seniority_max = max(seniority, na.rm = TRUE),
     seniority_mean = mean(seniority, na.rm = TRUE),
     .groups = "drop"
-) |>
-kable(caption = "Instructor counts by degree and sex")
-
+  ) |>
+  arrange(desc(n)) |>
+  kable(caption = "Instructor counts by degree and sex")
 ```
 
 **DVS-7: I show creativity in my tables.**
@@ -1267,19 +1273,14 @@ ca_childcare <- ca_childcare |>
 
 ```{r}
 #| label: pe-1-across
-#Lab 3, Question 10
-#Modified response to utilize across()
-teacher_evals_clean |>
-  filter(question_no %in% c(901, 902, 903)) |>
-  group_by(teacher_id) |>
-  summarize(
-    across(
-      SET_score_avg,
-      list(mean = ~mean(.x, na.rm = TRUE)),
-      .names = "avg_{.col}_{.fn}"
-    ),
-    n_courses = n_distinct(course_id),
-    .groups = "drop"
+#Lab 8, Question 1
+rescale_column <- function(df, cols) {
+  if (!is.data.frame(df)) {
+    stop("Error: Input must be a data frame.")
+  }
+  df |>
+    mutate(across({{ cols }}, ~ rescale_01(.x)))
+}
 ```
 
 -   using functions from the `map()` family
@@ -1354,9 +1355,9 @@ pivot_table <- function(df, row_var, col_var) {
 #| label: pe-3-across
 #Lab 7, Question 1
 missing_summary <- fish |>
-  summarise(
-    num_missing_obs = sum(if_any(everything(), is.na)),      across(everything(), ~ sum(is.na(.)))
-  )
+  summarise(num_missing_obs = sum(if_any(everything(), is.na)), 
+            across(everything(), ~ sum(is.na(.)))
+           )
 ```
 
 -   using a `map()` function with **one** input (e.g., `map()`, `map_chr()`, `map_dbl()`, etc.)
@@ -1424,37 +1425,39 @@ ca_childcare_long <- ca_childcare |>
 
 ```{r}
 #| label: pe-4-2
-#Challenge 4
-ca_afford_long <- ca_afford |>
-  select(study_year, center_afford,          family_afford) |>
+#Edited code from Challenge 4 to remove ca_afford_long by piping dplyr into ggplot
+ca_afford |>
+  select(study_year, center_afford, family_afford) |>
   pivot_longer(
     cols = c(center_afford, family_afford),
     names_to = "Setting",
     values_to = "Affordability"
-) |>
-mutate(
-  Setting = recode(Setting,
-                  center_afford = "Center-Based",
-                   family_afford = "Family-Based")
-)
-
-ggplot(ca_afford_long, aes(x = study_year, y = Affordability, color = Setting)) +
+  ) |>
+  mutate(
+    Setting = recode(
+      Setting,
+      center_afford = "Center-Based",
+      family_afford = "Family-Based"
+    )
+  ) |>
+  ggplot(aes(x = study_year, y = Affordability, color = Setting)) +
   stat_summary(fun = median, geom = "line", linewidth = 1.2) +
   stat_summary(fun = median, geom = "point", size = 2.2) +
-  scale_y_continuous(labels = label_percent(accuracy = 1)) + 
+  scale_y_continuous(labels = scales::label_percent(accuracy = 1)) + 
   labs(
-  title = "Affordability of Childcare in California (2008-2018)",
-  subtitle = "Median Weekly Cost as a Share of County Median Household Income",
-  x = "Year",
-  y = "Median Share of Weekly Income Spent on Infant Care",
-  color = "Childcare Setting"
-) +
-theme_minimal(base_size = 11) +
-theme(
-  plot.title = element_text(face = "bold", size = 15, hjust = 0.5),
-  plot.subtitle= element_text(size = 12, hjust= 0.5),
-  legend.position = "top"
-)
+    title = "Affordability of Childcare in California (2008–2018)",
+    subtitle = "Median Weekly Cost as a Share of County Median Household Income",
+    x = "Year",
+    y = "Median Share of Weekly Income Spent on Infant Care",
+    color = "Childcare Setting"
+  ) +
+  theme_minimal(base_size = 11) +
+  theme(
+    plot.title = element_text(face = "bold", size = 15, hjust = 0.5),
+    plot.subtitle= element_text(size = 12, hjust= 0.5),
+    legend.position = "top"
+  )
+
 ```
 
 ## Data Simulation & Statistical Models
@@ -1523,8 +1526,8 @@ summary(reg_mod1)
 ```{r}
 #| label: dsm-2-2
 #Challenge 3, Question 3
-#Showcasing Chi-Square Test of Indepedence
-chisq.test(table(teacher_evals_compare$SET_level, teacher_evals_compare$sen_level))
+#Showcasing Chi-Square Test of Indepedence, edited to remove table
+chisq.test(teacher_evals_compare$SET_level, teacher_evals_compare$sen_level)
 ```
 
 -   Example 3
