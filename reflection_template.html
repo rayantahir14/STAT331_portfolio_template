@@ -2360,33 +2360,35 @@ vertical-align: -.125em;
 <li>Date (example must use functions from <strong>lubridate</strong>)</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>fit48z <span class="ot">&lt;-</span> get_fit_now_member <span class="sc">|&gt;</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(membership_status <span class="sc">==</span> <span class="st">&quot;gold&quot;</span>,</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>         <span class="fu">str_detect</span>(id, <span class="fu">fixed</span>(<span class="st">&quot;48Z&quot;</span>)))</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>fit48z_checked <span class="ot">&lt;-</span> get_fit_now_check_in <span class="sc">|&gt;</span></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">ymd</span>(check_in_date) <span class="sc">==</span> <span class="fu">ymd</span>(<span class="st">&quot;2018-01-09&quot;</span>))</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>fit_cands <span class="ot">&lt;-</span> fit48z <span class="sc">|&gt;</span></span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(fit48z_checked, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;id&quot;</span> <span class="ot">=</span> <span class="st">&quot;membership_id&quot;</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(person, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;person_id&quot;</span> <span class="ot">=</span> <span class="st">&quot;id&quot;</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Lab 5, edited to fix mistake from midterm portfolio</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>fit48z <span class="ot">&lt;-</span> get_fit_now_member <span class="sc">|&gt;</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(membership_status <span class="sc">==</span> <span class="st">&quot;gold&quot;</span>,</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>         <span class="fu">str_detect</span>(id, <span class="fu">fixed</span>(<span class="st">&quot;48Z&quot;</span>)))</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>fit48z_checked <span class="ot">&lt;-</span> get_fit_now_check_in <span class="sc">|&gt;</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">ymd</span>(check_in_date) <span class="sc">==</span> <span class="fu">ymd</span>(<span class="st">&quot;2018-01-09&quot;</span>))</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>fit_cands <span class="ot">&lt;-</span> fit48z <span class="sc">|&gt;</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(fit48z_checked, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;id&quot;</span> <span class="ot">=</span> <span class="st">&quot;membership_id&quot;</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(person, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;person_id&quot;</span> <span class="ot">=</span> <span class="st">&quot;id&quot;</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><strong>WD-4: I can modify existing variables and create new variables in a dataframe for a <em>variety</em> of data types (e.g., numeric, integer, character, factor, date).</strong></p>
 <ul>
 <li>Numeric Example 1</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>teacher_evals_compare <span class="ot">&lt;-</span> teacher_evals <span class="sc">|&gt;</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(question_no<span class="sc">==</span><span class="dv">903</span>) <span class="sc">|&gt;</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">SET_level =</span> <span class="fu">if_else</span>(SET_score_avg <span class="sc">&gt;=</span> <span class="dv">4</span>, <span class="st">&quot;excellent&quot;</span>, <span class="st">&quot;standard&quot;</span>),</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">sen_level =</span> <span class="fu">case_when</span>(</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    seniority <span class="sc">&lt;=</span> <span class="dv">4</span> <span class="sc">~</span> <span class="st">&quot;junior&quot;</span>,</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    seniority <span class="sc">&gt;=</span> <span class="dv">5</span> <span class="sc">&amp;</span> seniority <span class="sc">&lt;=</span> <span class="dv">8</span> <span class="sc">~</span> <span class="st">&quot;senior&quot;</span>,</span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    seniority <span class="sc">&gt;</span> <span class="dv">8</span> <span class="sc">~</span> <span class="st">&quot;very senior&quot;</span>,</span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="fu">select</span>(course_id, SET_level, sen_level)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Challenge 3</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>teacher_evals_compare <span class="ot">&lt;-</span> teacher_evals <span class="sc">|&gt;</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(question_no<span class="sc">==</span><span class="dv">903</span>) <span class="sc">|&gt;</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">SET_level =</span> <span class="fu">if_else</span>(SET_score_avg <span class="sc">&gt;=</span> <span class="dv">4</span>, <span class="st">&quot;excellent&quot;</span>, <span class="st">&quot;standard&quot;</span>),</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">sen_level =</span> <span class="fu">case_when</span>(</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    seniority <span class="sc">&lt;=</span> <span class="dv">4</span> <span class="sc">~</span> <span class="st">&quot;junior&quot;</span>,</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    seniority <span class="sc">&gt;=</span> <span class="dv">5</span> <span class="sc">&amp;</span> seniority <span class="sc">&lt;=</span> <span class="dv">8</span> <span class="sc">~</span> <span class="st">&quot;senior&quot;</span>,</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    seniority <span class="sc">&gt;</span> <span class="dv">8</span> <span class="sc">~</span> <span class="st">&quot;very senior&quot;</span>,</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="fu">select</span>(course_id, SET_level, sen_level)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <ul>
 <li>Numeric Example 2</li>
@@ -2557,10 +2559,9 @@ vertical-align: -.125em;
 </ul>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Using data/context from Lab 4 to display an antijoin that would find missing counties</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>missing_tax_counties <span class="ot">&lt;-</span> ca_childcare <span class="sc">|&gt;</span></span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(county_name) <span class="sc">|&gt;</span></span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">anti_join</span>(tax_rev, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;county_name&quot;</span> <span class="ot">=</span> <span class="st">&quot;entity_name&quot;</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>missing_tax_counties <span class="ot">&lt;-</span> ca_childcare <span class="sc">|&gt;</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(county_name) <span class="sc">|&gt;</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">anti_join</span>(tax_rev, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;county_name&quot;</span> <span class="ot">=</span> <span class="st">&quot;entity_name&quot;</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><strong>WD-7: I can pivot dataframes from long to wide and visa versa</strong></p>
 <ul>
@@ -2866,7 +2867,7 @@ vertical-align: -.125em;
 <div class="cell">
 <div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Challenge 4</span></span>
 <span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>ca_afford_long <span class="ot">&lt;-</span> ca_afford <span class="sc">|&gt;</span></span>
-<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">seplect</span>(study_year, center_afford,          family_afford) <span class="sc">|&gt;</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">seplect</span>(study_year, center_afford, family_afford) <span class="sc">|&gt;</span></span>
 <span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
 <span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">c</span>(center_afford, family_afford),</span>
 <span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">&quot;Setting&quot;</span>,</span>
@@ -3209,7 +3210,7 @@ vertical-align: -.125em;
 <span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>concert_mastermind <span class="ot">&lt;-</span> facebook_event_checkin <span class="sc">|&gt;</span></span>
 <span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(</span>
 <span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>    event_name <span class="sc">==</span> <span class="st">&quot;SQL Symphony Concert&quot;</span>, </span>
-<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ymd</span>(date) <span class="sc">%within%</span> <span class="fu">interval</span>(<span class="fu">ymd</span>(<span class="st">&quot;2017-12-01&quot;</span>),               <span class="fu">ymd</span>(<span class="st">&quot;2017-12-31&quot;</span>))) <span class="sc">|&gt;</span></span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ymd</span>(date) <span class="sc">%within%</span> <span class="fu">interval</span>(<span class="fu">ymd</span>(<span class="st">&quot;2017-12-01&quot;</span>), <span class="fu">ymd</span>(<span class="st">&quot;2017-12-31&quot;</span>))) <span class="sc">|&gt;</span></span>
 <span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>  non_attendees <span class="ot">&lt;-</span> person <span class="sc">|&gt;</span></span>
 <span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">anti_join</span>(concert_attendees, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;id&quot;</span> <span class="ot">=</span> <span class="st">&quot;person_id&quot;</span>))</span>
