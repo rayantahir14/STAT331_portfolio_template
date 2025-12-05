@@ -188,6 +188,7 @@ fit_cands <- fit48z |>
 
 ```{r}
 #| label: wd-3-date
+#Lab 5, edited to fix mistake from midterm portfolio
 fit48z <- get_fit_now_member |>
   filter(membership_status == "gold",
          str_detect(id, fixed("48Z")))
@@ -206,6 +207,7 @@ fit_cands <- fit48z |>
 
 ```{r}
 #| label: wd-4-numeric-ex-1
+#Challenge 3
 teacher_evals_compare <- teacher_evals |>
   filter(question_no==903) |>
   mutate(
@@ -402,7 +404,6 @@ fit_cands <- fit48z |>
 ```{r}
 #| label: wd-6-anti
 #Using data/context from Lab 4 to display an antijoin that would find missing counties
-
 missing_tax_counties <- ca_childcare |>
   select(county_name) |>
   anti_join(tax_rev, by = c("county_name" = "entity_name"))
@@ -594,7 +595,6 @@ theme(
   plot.subtitle= element_text(size = 12, hjust= 0.5),
   legend.position = "top"
 )
-
 ```
 
 -   At least one numeric variable and one categorical variable
@@ -702,7 +702,6 @@ labs(
   color = "Sex") + 
   theme(axis.text.x = element_text(hjust = 1), 
         plot.title = element_text(hjust = 0.5))
-
 ```
 
 -   I can modify my colors to be accessible to anyone's eyes
@@ -733,7 +732,7 @@ labs(
 #| label: dvs-2-ex-3
 #Challenge 4
 ca_afford_long <- ca_afford |>
-  seplect(study_year, center_afford,          family_afford) |>
+  seplect(study_year, center_afford, family_afford) |>
   pivot_longer(
     cols = c(center_afford, family_afford),
     names_to = "Setting",
@@ -1086,7 +1085,7 @@ teacher_evals_clean |>
 concert_mastermind <- facebook_event_checkin |>
   filter(
     event_name == "SQL Symphony Concert", 
-    ymd(date) %within% interval(ymd("2017-12-01"),               ymd("2017-12-31"))) |>
+    ymd(date) %within% interval(ymd("2017-12-01"), ymd("2017-12-31"))) |>
   
   non_attendees <- person |>
     anti_join(concert_attendees, by = c("id" = "person_id"))
